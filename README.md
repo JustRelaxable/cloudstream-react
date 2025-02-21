@@ -8,5 +8,5 @@ If you are a React developer you can contribute to the code, it is just a wrappe
 
 ## Contributing
 
-Contributions are always welcome! This project needs a lot of testing stuff. You can also checkout cloudstream-jvm project if you want to contribute back-end.
+Contributions are always welcome! This project needs a lot of testing stuff. You can also checkout [cloudstream-jvm](https://github.com/JustRelaxable/cloudstream-jvm) project if you want to contribute back-end.
 
