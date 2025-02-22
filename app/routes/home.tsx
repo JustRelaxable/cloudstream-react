@@ -35,7 +35,7 @@ const movie: MovieLoadResponse = {
 };
 
 export default function Home() {
-  //return <HomePage />;
-  return <PlayerPage movie={movie} />;
+  return <HomePage />;
+  //return <PlayerPage movie={movie} />;
   //return <Welcome />;
 }
