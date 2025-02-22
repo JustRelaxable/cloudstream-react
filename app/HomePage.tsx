@@ -3,6 +3,7 @@ import HomePageCategory from "./HomePageCategory";
 import { webServerUrl } from "./config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
+import BottomBar from "./components/BottomBar";
 
 const HomePage: React.FC = () => {
   const [selectedProvider, setSelectedProvider] = useState<string>("");
@@ -35,27 +36,30 @@ const HomePage: React.FC = () => {
   */
 
   return (
-    <div className="h-full w-full">
-      {selectedProvider == "" && (
-        <div className="flex items-center justify-center h-full w-full">
-          <p>There is no selected provider</p>
+    <div className="flex flex-col h-full w-full">
+      <div className="relative flex-1 overflow-y-auto">
+        {selectedProvider == "" && (
+          <div className="flex items-center justify-center h-full w-full">
+            <p>There is no selected provider</p>
+          </div>
+        )}
+        {selectedProvider != "" &&
+          categories.map((category) => (
+            <HomePageCategory
+              key={category.name}
+              provider={selectedProvider}
+              category={category}
+            />
+          ))}
+
+        <div
+          className="flex items-center fixed bottom-25 right-5 p-4 bg-blue-950 text-white rounded-xl shadow-lg"
+          onClick={() => {
+            setProviderListVisible(true);
+          }}
+        >
+          <FontAwesomeIcon className="text-xl" icon={faBars} />
         </div>
-      )}
-      {selectedProvider != "" &&
-        categories.map((category) => (
-          <HomePageCategory
-            key={category.name}
-            provider={selectedProvider}
-            category={category}
-          />
-        ))}
-      <div
-        className="flex items-center fixed bottom-5 right-5 p-4 bg-blue-950 text-white rounded-xl shadow-lg"
-        onClick={() => {
-          setProviderListVisible(true);
-        }}
-      >
-        <FontAwesomeIcon className="text-xl" icon={faBars} />
       </div>
       {isProviderListVisible && (
         <div className="fixed bottom-0 w-full h-fit bg-blue-950 rounded-lg shadow-lg overflow-hidden">
@@ -100,6 +104,7 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       )}
+      <BottomBar />
     </div>
   );
 };
