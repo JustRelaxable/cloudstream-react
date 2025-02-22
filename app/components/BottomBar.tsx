@@ -11,26 +11,24 @@ const BottomBar = () => {
   };
 
   return (
-    <div className="w-full bg-white shadow-lg">
-      <div className="flex justify-around items-center p-3">
+    <div className="w-full bg-nav-bg shadow-lg">
+      <div className="flex justify-around items-center p-5">
         <div
           className={`flex flex-col items-center cursor-pointer ${
-            activeTab === "home" ? "text-blue-500" : "text-gray-500"
+            activeTab === "home" ? "text-icon-active" : "text-gray-500"
           }`}
           onClick={() => handleTabClick("home")}
         >
-          <FontAwesomeIcon icon={faHome} className="text-2xl" />
-          <span className="text-sm mt-1">Home</span>
+          <FontAwesomeIcon icon={faHome} className="text-xl" />
         </div>
 
         <div
           className={`flex flex-col items-center cursor-pointer ${
-            activeTab === "settings" ? "text-blue-500" : "text-gray-500"
+            activeTab === "settings" ? "text-icon-active" : "text-gray-500"
           }`}
           onClick={() => handleTabClick("settings")}
         >
-          <FontAwesomeIcon icon={faCog} className="text-2xl" />
-          <span className="text-sm mt-1">Settings</span>
+          <FontAwesomeIcon icon={faCog} className="text-xl" />
         </div>
       </div>
     </div>

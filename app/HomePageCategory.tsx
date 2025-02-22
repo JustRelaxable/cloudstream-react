@@ -41,9 +41,9 @@ const HomePageCategory: React.FC<HomePageCategoryProps> = ({
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="p-4 border-b border-gray-300">
+    <div className="">
       <h2 className="text-lg font-bold mb-2">{category.name}</h2>
-      <div className="flex overflow-x-auto space-x-4 p-2">
+      <div className="flex overflow-x-auto space-x-1.5">
         {contents.map((content, index) => (
           <ContentThumbnail
             key={index}

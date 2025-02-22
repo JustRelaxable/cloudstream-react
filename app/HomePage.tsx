@@ -30,11 +30,6 @@ const HomePage: React.FC = () => {
     }
   }, [selectedProvider]);
 
-  /*
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-  */
-
   return (
     <div className="flex flex-col h-full w-full">
       <div className="relative flex-1 overflow-y-auto">
@@ -53,7 +48,7 @@ const HomePage: React.FC = () => {
           ))}
 
         <div
-          className="flex items-center fixed bottom-25 right-5 p-4 bg-blue-950 text-white rounded-xl shadow-lg"
+          className="flex items-center fixed bottom-25 right-5 p-5 bg-nav-bg text-white rounded-xl shadow-lg"
           onClick={() => {
             setProviderListVisible(true);
           }}
@@ -62,7 +57,7 @@ const HomePage: React.FC = () => {
         </div>
       </div>
       {isProviderListVisible && (
-        <div className="fixed bottom-0 w-full h-fit bg-blue-950 rounded-lg shadow-lg overflow-hidden">
+        <div className="fixed bottom-0 w-full bg-bg h-fit rounded-t-xl shadow-lg overflow-hidden">
           <div className="overflow-y-auto">
             {providers === null || providers.length === 0 ? (
               <div
