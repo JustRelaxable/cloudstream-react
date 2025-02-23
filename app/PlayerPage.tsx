@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import ReactPlayer from "react-player";
 import { ExtractorLinkType } from "./interfaces/ExtractorLinkType";
 import { webServerUrl } from "./config";
+import TopNavigationBar from "./components/TopNavigationBar";
 
 const PlayerPage: React.FC<{ movie: MovieLoadResponse }> = ({ movie }) => {
   const [links, setLinks] = useState<LoadLinksResponse | null>(null);
@@ -14,15 +15,8 @@ const PlayerPage: React.FC<{ movie: MovieLoadResponse }> = ({ movie }) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            provider: "InatBox",
-            data: JSON.stringify({
-              chHeaders: "null",
-              chUrl: movie.dataUrl,
-              chReg: "null",
-              chImg: movie.posterUrl,
-              chName: movie.name,
-              chType: "inat_disk_sh_2",
-            }),
+            provider: "HDFilmCehennemi",
+            data: movie.dataUrl,
           }),
         });
 
@@ -36,6 +30,7 @@ const PlayerPage: React.FC<{ movie: MovieLoadResponse }> = ({ movie }) => {
           throw new Error(result.message || "Failed to fetch video links");
         }
 
+        console.log(result.data);
         setLinks(result.data);
       } catch (err) {
         setError("Error loading video links. Please try again later.");
@@ -59,71 +54,49 @@ const PlayerPage: React.FC<{ movie: MovieLoadResponse }> = ({ movie }) => {
   );
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Now Playing: {movie.name}</h1>
+    <div className="flex flex-col fixed top-0 left-0 w-full h-full bg-bg z-100">
+      <TopNavigationBar onNavBack={() => {}} />
+      <div className="overflow-y-auto">
+        <h1 className="text-2xl font-bold mb-4">{movie.name}</h1>
+        {videoLink ? (
+          <div className="w-full max-w-4xl">
+            <ReactPlayer
+              url={`${videoLink.url}`}
+              controls
+              width="100%"
+              height="auto"
+              config={{
+                file: {
+                  attributes: {},
+                  tracks: links.subtitleFiles.map((sub) => ({
+                    kind: "subtitles",
+                    src: sub.url,
+                    srcLang: sub.lang,
+                    label: sub.lang,
+                    default: sub.lang === "en", // Default to English subtitles
+                  })),
+                  hlsOptions: {
+                    xhrSetup: (xhr: XMLHttpRequest, url: string) => {
+                      console.log("Intercepted segment request:", url);
+                      if (url.includes(`${webServerUrl}proxy/`)) {
+                        url = url.replace(`${webServerUrl}proxy/`, "");
+                      }
+                      console.log("c-referer");
 
-      {videoLink ? (
-        <div className="w-full max-w-4xl mx-auto">
-          <ReactPlayer
-            url={`${videoLink.url}`}
-            controls
-            width="100%"
-            height="auto"
-            config={{
-              file: {
-                attributes: {
-                  controlsList: "nodownload", // Disable download option
-                },
-                tracks: links.subtitleFiles.map((sub) => ({
-                  kind: "subtitles",
-                  src: sub.url,
-                  srcLang: sub.lang,
-                  label: sub.lang,
-                  default: sub.lang === "en", // Default to English subtitles
-                })),
-                hlsOptions: {
-                  xhrSetup: (xhr: XMLHttpRequest, url: string) => {
-                    console.log("Intercepted segment request:", url);
-                    if (url.includes(`${webServerUrl}proxy/`)) {
-                      url = url.replace(`${webServerUrl}proxy/`, "");
-                    }
-                    xhr.open("GET", `${webServerUrl}proxy/${url}`, true);
+                      xhr.open("GET", `${webServerUrl}proxy/${url}`, true);
+                      xhr.setRequestHeader(
+                        "c-Referer",
+                        links.extractorLinks[0].referer
+                      );
+                    },
                   },
                 },
-              },
-            }}
-          />
-        </div>
-      ) : (
-        <div className="text-red-500">No playable video link found.</div>
-      )}
-
-      <div className="mt-4">
-        <h2 className="text-xl font-bold">Subtitles</h2>
-        <ul className="list-disc pl-6">
-          {links.subtitleFiles.map((sub) => (
-            <li key={sub.url}>
-              {sub.lang}:{" "}
-              <a href={sub.url} className="text-blue-500 hover:underline">
-                {sub.url}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="mt-4">
-        <h2 className="text-xl font-bold">Available Links</h2>
-        <ul className="list-disc pl-6">
-          {links.extractorLinks.map((link) => (
-            <li key={link.url}>
-              {link.name} ({link.type}) -{" "}
-              <a href={link.url} className="text-blue-500 hover:underline">
-                {link.url}
-              </a>
-            </li>
-          ))}
-        </ul>
+              }}
+            />
+          </div>
+        ) : (
+          <div className="text-red-500">No playable video link found.</div>
+        )}
       </div>
     </div>
   );

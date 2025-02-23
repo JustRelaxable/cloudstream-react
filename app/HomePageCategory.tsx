@@ -39,7 +39,7 @@ const HomePageCategory: React.FC<{
 
   return (
     <div className="">
-      <h2 className="text-lg font-bold mb-2">
+      <h2 className="text-xl font-bold mb-2">
         {homePageCategoryProps.category.name}
       </h2>
       <div className="flex overflow-x-auto space-x-1.5">
