@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
-import HomePageCategory from "./HomePageCategory";
-import { webServerUrl } from "./config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-import BottomBar from "./components/BottomBar";
+import BottomBar from "~/components/BottomBar";
+import HomePageCategory from "~/HomePageCategory";
+import { webServerUrl } from "../config";
+import ContentDetails from "./ContentDetails";
 
 const HomePage: React.FC = () => {
   const [selectedProvider, setSelectedProvider] = useState<string>("");
+  const [selectedContent, setSelectedContent] = useState<SearchResponse | null>(
+    null
+  );
   const [providers, setProviders] = useState<string[] | null>(null);
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -42,8 +46,11 @@ const HomePage: React.FC = () => {
           categories.map((category) => (
             <HomePageCategory
               key={category.name}
-              provider={selectedProvider}
-              category={category}
+              homePageCategoryProps={{
+                provider: selectedProvider,
+                category: category,
+              }}
+              onContentSelected={(content) => setSelectedContent(content)}
             />
           ))}
 
@@ -100,6 +107,12 @@ const HomePage: React.FC = () => {
         </div>
       )}
       <BottomBar />
+      {selectedContent != null && (
+        <ContentDetails
+          content={selectedContent!!}
+          onClose={() => setSelectedContent(null)}
+        />
+      )}
     </div>
   );
 };

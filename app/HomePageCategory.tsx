@@ -1,28 +1,25 @@
 import { useEffect, useState } from "react";
 import ContentThumbnail from "./ContentThumbnail";
-import ContentDetails from "./ContentDetails";
 import { webServerUrl } from "./config";
+import ContentDetails from "./pages/ContentDetails";
 
-const HomePageCategory: React.FC<HomePageCategoryProps> = ({
-  provider,
-  category,
-}) => {
+const HomePageCategory: React.FC<{
+  homePageCategoryProps: HomePageCategoryProps;
+  onContentSelected: (content: SearchResponse) => void;
+}> = ({ homePageCategoryProps, onContentSelected }) => {
   const [contents, setContents] = useState<SearchResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedContent, setSelectedContent] = useState<SearchResponse | null>(
-    null
-  );
 
   useEffect(() => {
     fetch(`${webServerUrl}api/mainpage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        provider,
+        provider: homePageCategoryProps.provider,
         page: 1,
-        name: category.name,
-        data: category.data,
+        name: homePageCategoryProps.category.name,
+        data: homePageCategoryProps.category.data,
       }),
     })
       .then((response) => response.json())
@@ -35,27 +32,25 @@ const HomePageCategory: React.FC<HomePageCategoryProps> = ({
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [provider, category]);
+  }, []);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="">
-      <h2 className="text-lg font-bold mb-2">{category.name}</h2>
+      <h2 className="text-lg font-bold mb-2">
+        {homePageCategoryProps.category.name}
+      </h2>
       <div className="flex overflow-x-auto space-x-1.5">
         {contents.map((content, index) => (
           <ContentThumbnail
             key={index}
             content={content}
-            onClick={() => setSelectedContent(content)}
+            onClick={() => onContentSelected(content)}
           />
         ))}
       </div>
-      <ContentDetails
-        content={selectedContent}
-        onClose={() => setSelectedContent(null)}
-      />
     </div>
   );
 };
