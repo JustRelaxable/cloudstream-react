@@ -5,9 +5,18 @@ import BottomBar from "~/components/BottomBar";
 import HomePageCategory from "~/HomePageCategory";
 import { webServerUrl } from "../config";
 import ContentDetails from "./ContentDetails";
+import {
+  Link,
+  NavLink,
+  useLocation,
+  useNavigate,
+  useNavigation,
+} from "react-router";
 
 const HomePage: React.FC = () => {
-  const [selectedProvider, setSelectedProvider] = useState<string>("");
+  const location = useLocation();
+  const selectedProvider = location.state as string;
+
   const [selectedContent, setSelectedContent] = useState<SearchResponse | null>(
     null
   );
@@ -67,39 +76,43 @@ const HomePage: React.FC = () => {
         <div className="fixed bottom-0 w-full bg-bg h-fit rounded-t-xl shadow-lg overflow-hidden">
           <div className="overflow-y-auto">
             {providers === null || providers.length === 0 ? (
-              <div
-                className="p-3 hover:bg-gray-100 cursor-pointer"
-                onClick={() => {
-                  setSelectedProvider("");
-                  setProviderListVisible(false);
-                }}
-              >
-                None
-              </div>
-            ) : (
-              <>
-                {/* Add "None" as the first option */}
+              <Link to={"/"} state={""}>
                 <div
-                  className="p-3 hover:bg-gray-100 cursor-pointer"
+                  className="p-3 cursor-pointer"
                   onClick={() => {
-                    setSelectedProvider("");
                     setProviderListVisible(false);
                   }}
                 >
                   None
                 </div>
-                {/* Map through providers */}
-                {providers.map((provider, index) => (
+              </Link>
+            ) : (
+              <>
+                {/* Add "None" as the first option */}
+                <Link to={"/"} state={""}>
                   <div
-                    key={index}
-                    className="p-3 hover:bg-gray-100 cursor-pointer"
+                    className="p-3 cursor-pointer"
                     onClick={() => {
-                      setSelectedProvider(provider);
                       setProviderListVisible(false);
                     }}
                   >
-                    {provider}
+                    None
                   </div>
+                </Link>
+
+                {/* Map through providers */}
+                {providers.map((provider, index) => (
+                  <Link to={"/"} state={provider}>
+                    <div
+                      key={index}
+                      className="p-3 cursor-pointer"
+                      onClick={() => {
+                        setProviderListVisible(false);
+                      }}
+                    >
+                      {provider}
+                    </div>
+                  </Link>
                 ))}
               </>
             )}
@@ -107,12 +120,13 @@ const HomePage: React.FC = () => {
         </div>
       )}
       <BottomBar />
-      {selectedContent != null && (
+      {/*
+      selectedContent != null && (
         <ContentDetails
           content={selectedContent!!}
           onClose={() => setSelectedContent(null)}
         />
-      )}
+      )*/}
     </div>
   );
 };

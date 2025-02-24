@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { webServerUrl } from "../config";
 import TopContentDetailsBar from "~/components/TopContentDetailsBar";
 import PlayerPage from "~/PlayerPage";
+import { useLocation } from "react-router";
 
-const ContentDetails: React.FC<{
-  content: SearchResponse;
-  onClose: () => void;
-}> = ({ content, onClose }) => {
+const ContentDetails = () => {
+  const location = useLocation();
+  const content = location.state as SearchResponse;
+
   const [details, setDetails] = useState<LoadResponse | null>(null);
   const [playerActive, setPlayerActive] = useState(false);
 
@@ -33,7 +34,6 @@ const ContentDetails: React.FC<{
 
   return (
     <div className="flex flex-col fixed top-0 left-0 w-full h-full bg-bg z-50">
-      <TopContentDetailsBar onNavBack={onClose} />
       <div className="flex-1 overflow-auto">
         {details.posterUrl && (
           <img

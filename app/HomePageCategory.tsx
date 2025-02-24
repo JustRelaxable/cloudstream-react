@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ContentThumbnail from "./ContentThumbnail";
 import { webServerUrl } from "./config";
 import ContentDetails from "./pages/ContentDetails";
+import { Link } from "react-router";
 
 const HomePageCategory: React.FC<{
   homePageCategoryProps: HomePageCategoryProps;
@@ -44,11 +45,13 @@ const HomePageCategory: React.FC<{
       </h2>
       <div className="flex overflow-x-auto space-x-1.5">
         {contents.map((content, index) => (
-          <ContentThumbnail
-            key={index}
-            content={content}
-            onClick={() => onContentSelected(content)}
-          />
+          <Link to={{ pathname: `/details` }} state={content}>
+            <ContentThumbnail
+              key={index}
+              content={content}
+              onClick={() => onContentSelected(content)}
+            />
+          </Link>
         ))}
       </div>
     </div>

@@ -55,7 +55,6 @@ const PlayerPage: React.FC<{ movie: MovieLoadResponse }> = ({ movie }) => {
 
   return (
     <div className="flex flex-col fixed top-0 left-0 w-full h-full bg-bg z-100">
-      <TopNavigationBar onNavBack={() => {}} />
       <div className="overflow-y-auto">
         <h1 className="text-2xl font-bold mb-4">{movie.name}</h1>
         {videoLink ? (
