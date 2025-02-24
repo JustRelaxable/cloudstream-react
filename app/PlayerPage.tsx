@@ -3,10 +3,16 @@ import ReactPlayer from "react-player";
 import { ExtractorLinkType } from "./interfaces/ExtractorLinkType";
 import { webServerUrl } from "./config";
 import TopNavigationBar from "./components/TopNavigationBar";
+import { useLocation } from "react-router";
 
 const PlayerPage: React.FC<{ movie: MovieLoadResponse }> = ({ movie }) => {
+  //const location = useLocation();
+  //const loadResponse = location.state as LoadResponse;
+
   const [links, setLinks] = useState<LoadLinksResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const [currentSourceIndex, setCurrentSourceIndex] = useState(0);
 
   useEffect(() => {
     const fetchLinks = async () => {
@@ -15,7 +21,7 @@ const PlayerPage: React.FC<{ movie: MovieLoadResponse }> = ({ movie }) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            provider: "HDFilmCehennemi",
+            provider: movie.apiName,
             data: movie.dataUrl,
           }),
         });
@@ -46,7 +52,7 @@ const PlayerPage: React.FC<{ movie: MovieLoadResponse }> = ({ movie }) => {
   }
 
   if (!links) {
-    return <div>Loading...</div>;
+    return null;
   }
 
   const videoLink = links.extractorLinks.find((link) =>
@@ -57,45 +63,40 @@ const PlayerPage: React.FC<{ movie: MovieLoadResponse }> = ({ movie }) => {
     <div className="flex flex-col fixed top-0 left-0 w-full h-full bg-bg z-100">
       <div className="overflow-y-auto">
         <h1 className="text-2xl font-bold mb-4">{movie.name}</h1>
-        {videoLink ? (
-          <div className="w-full max-w-4xl">
-            <ReactPlayer
-              url={`${videoLink.url}`}
-              controls
-              width="100%"
-              height="auto"
-              config={{
-                file: {
-                  attributes: {},
-                  tracks: links.subtitleFiles.map((sub) => ({
-                    kind: "subtitles",
-                    src: sub.url,
-                    srcLang: sub.lang,
-                    label: sub.lang,
-                    default: sub.lang === "en", // Default to English subtitles
-                  })),
-                  hlsOptions: {
-                    xhrSetup: (xhr: XMLHttpRequest, url: string) => {
-                      console.log("Intercepted segment request:", url);
-                      if (url.includes(`${webServerUrl}proxy/`)) {
-                        url = url.replace(`${webServerUrl}proxy/`, "");
-                      }
-                      console.log("c-referer");
-
-                      xhr.open("GET", `${webServerUrl}proxy/${url}`, true);
-                      xhr.setRequestHeader(
-                        "c-Referer",
-                        links.extractorLinks[0].referer
-                      );
-                    },
+        <div className="w-full max-w-4xl">
+          <ReactPlayer
+            url={links.extractorLinks[currentSourceIndex].url}
+            controls
+            width="100%"
+            height="auto"
+            config={{
+              file: {
+                attributes: {
+                  crossOrigin: "anonymous",
+                },
+                tracks: links.subtitleFiles.map((sub) => ({
+                  kind: "subtitles",
+                  src: `${webServerUrl}proxy/${sub.url}`,
+                  srcLang: sub.lang,
+                  label: sub.lang,
+                })),
+                hlsOptions: {
+                  xhrSetup: (xhr: XMLHttpRequest, url: string) => {
+                    console.log("Intercepted segment request:", url);
+                    if (url.includes(`${webServerUrl}proxy/`)) {
+                      url = url.replace(`${webServerUrl}proxy/`, "");
+                    }
+                    xhr.open("GET", `${webServerUrl}proxy/${url}`, true);
+                    xhr.setRequestHeader(
+                      "c-Referer",
+                      links.extractorLinks[currentSourceIndex].referer
+                    );
                   },
                 },
-              }}
-            />
-          </div>
-        ) : (
-          <div className="text-red-500">No playable video link found.</div>
-        )}
+              },
+            }}
+          />
+        </div>
       </div>
     </div>
   );

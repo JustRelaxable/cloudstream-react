@@ -99,8 +99,6 @@ const HomePage: React.FC = () => {
                     None
                   </div>
                 </Link>
-
-                {/* Map through providers */}
                 {providers.map((provider, index) => (
                   <Link to={"/"} state={provider}>
                     <div
@@ -120,13 +118,6 @@ const HomePage: React.FC = () => {
         </div>
       )}
       <BottomBar />
-      {/*
-      selectedContent != null && (
-        <ContentDetails
-          content={selectedContent!!}
-          onClose={() => setSelectedContent(null)}
-        />
-      )*/}
     </div>
   );
 };
